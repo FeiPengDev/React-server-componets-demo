@@ -1,42 +1,14 @@
-# 一、React Server Components基本概念
+问题：
 
-RSC是一种新型态的组件形式，可以专门在服务器上运行，并且可以执行数据可查询、文件读写等操作。与之相对应的就是React Client Components(RCC).
+1.中间件剧给例子
 
-## 特性
-1. 减少最终打包体积
-2. 减少获取数据上的时间消耗
-3. 渐进式渲染
-https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js
+2.reducer中不允许的操作详细
 
-## React渲染方式的发展
+# 一、Redux包含的几个基本概念
 
-### 客户端渲染——Client Side Rendering
-
-请求html => 或许JS、css等资源 => 执行JS请求必须的数据 => 渲染出页面
-![img_1.png](img_1.png)
-
-```html
-<!DOCTYPE html>
-<html>
-  <body>
-    <div id="root"></div>
-    <script src="/static/js/bundle.js"></script>
-  </body>
-</html>
-```
-
-
-### 服务端渲染SSR——Server Side Rendering
-每次访问时在服务器端将页面预渲染成 HTML 后再返回给客户端，然后客户端会将页面水合（hydrated）打包好的JS中的逻辑。
-
-### 静态渲染SSG——Static Site Generation
-构建的时候直接把结果页面输出html到磁盘并在服务器启动静态server，实现静态站点生成。
-
-### 预渲染
-与ssr类似，先在服务端构建生成静态HTML以及依赖的JS等资源，然后在客户端通过水合（hydrated）的方式将交互逻辑和静态页面结合
+redux是用来管理项目全局状态的工具。
 
 1. 它具有单一数据流的属性
-2. ![img.png](img.png)
 
    redux中只有一个单一的store，保存了整个应用的状态。单一的state tree由不同的reducer处理不同模块中的状态
 
