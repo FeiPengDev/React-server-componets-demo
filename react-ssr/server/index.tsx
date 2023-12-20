@@ -13,6 +13,7 @@ app.get('/', (_: unknown, res: express.Response) => {
 <div id="root">${renderToString(<App userName={userName} />)}</div>
 <script>
 window.__initialState = { userName: '${userName}' };
+// window.__initialState = { userName: 'TEST' }
 </script>
 <script src="/bundle.js"></script>
 `

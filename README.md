@@ -8,11 +8,14 @@ RSC是一种新型态的组件形式，可以专门在服务器上运行，并�
 3. 渐进式渲染
 https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js
 
-## React渲染方式的发展
+## 渲染方式
 
 ### 客户端渲染——Client Side Rendering
 
-请求html => 或许JS、css等资源 => 执行JS请求必须的数据 => 渲染出页面
+请求html => 加载js、css等资源 => 执行js并请求需要的数据 => 渲染出页面
+
+组件存在于客户端，在与服务端交互后请求数据后再继续更新页面
+
 ![img_1.png](img_1.png)
 
 ```html
@@ -24,17 +27,22 @@ https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFligh
   </body>
 </html>
 ```
-
-
-### 服务端渲染SSR——Server Side Rendering
-每次访问时在服务器端将页面预渲染成 HTML 后再返回给客户端，然后客户端会将页面水合（hydrated）打包好的JS中的逻辑。
-
 ### 静态渲染SSG——Static Site Generation
-构建的时候直接把结果页面输出html到磁盘并在服务器启动静态server，实现静态站点生成。
 
-### 预渲染
-与ssr类似，先在服务端构建生成静态HTML以及依赖的JS等资源，然后在客户端通过水合（hydrated）的方式将交互逻辑和静态页面结合
+构建的时直接把结果页面输出为html到磁盘并在服务器启动静态server，实现静态站点生成。
 
+不需要动态生成、页面交互少，如博客、新闻等站点。
+### 服务端渲染SSR——Server Side Rendering
+
+组件被分为两部分，服务端可渲染生成静态页面的初次渲染组件、后续需要交互和逻辑的客户端组件
+
+1. 每次访问时在服务器端将页面预渲染成一个包含初始状态的 HTML 返回给客户端
+2. 客户端会请求页面并加载包含应用逻辑的JS
+3. 水合（hydrated）打包好的JS中的逻辑如交互逻辑、更新页面状态进入客户端渲染阶段。
+
+
+
+## 
 1. 它具有单一数据流的属性
 2. ![img.png](img.png)
 
