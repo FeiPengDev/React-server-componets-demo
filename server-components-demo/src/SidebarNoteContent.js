@@ -20,6 +20,7 @@ export default function SidebarNoteContent({
   const {location, navigate} = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isExpanded, setIsExpanded] = useState(false);
+  console.log(id);
   const isActive = id === location.selectedId;
 
   // Animate after title is edited.

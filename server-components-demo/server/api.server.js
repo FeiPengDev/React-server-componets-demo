@@ -24,42 +24,25 @@ const {readFileSync} = require('fs');
 const {unlink, writeFile} = require('fs').promises;
 const {renderToPipeableStream} = require('react-server-dom-webpack/server');
 const path = require('path');
-const {Pool} = require('pg');
 const React = require('react');
 const ReactApp = require('../src/App').default;
+const {
+  db,
+  findNote,
+  insertNote,
+  editNote,
+  deleteNote,
+} = require('../src/db.mock');
 
-// Don't keep credentials in the source tree in a real app!
-const pool = new Pool(require('../credentials'));
-
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 const app = express();
 
 app.use(compress());
 app.use(express.json());
 
-app
-  .listen(PORT, () => {
-    console.log(`React Notes listening at ${PORT}...`);
-  })
-  .on('error', function(error) {
-    if (error.syscall !== 'listen') {
-      throw error;
-    }
-    const isPipe = (portOrPipe) => Number.isNaN(portOrPipe);
-    const bind = isPipe(PORT) ? 'Pipe ' + PORT : 'Port ' + PORT;
-    switch (error.code) {
-      case 'EACCES':
-        console.error(bind + ' requires elevated privileges');
-        process.exit(1);
-        break;
-      case 'EADDRINUSE':
-        console.error(bind + ' is already in use');
-        process.exit(1);
-        break;
-      default:
-        throw error;
-    }
-  });
+app.listen(PORT, () => {
+  console.log('React Notes listening at 4000...');
+});
 
 function handleErrors(fn) {
   return async function(req, res, next) {
@@ -93,10 +76,7 @@ async function renderReactTree(res, props) {
     'utf8'
   );
   const moduleMap = JSON.parse(manifest);
-  const {pipe} = renderToPipeableStream(
-    React.createElement(ReactApp, props),
-    moduleMap
-  );
+  const {pipe} = renderToPipeableStream(React.createElement(ReactApp, props), moduleMap);
   pipe(res);
 }
 
@@ -122,12 +102,8 @@ const NOTES_PATH = path.resolve(__dirname, '../notes');
 app.post(
   '/notes',
   handleErrors(async function(req, res) {
-    const now = new Date();
-    const result = await pool.query(
-      'insert into notes (title, body, created_at, updated_at) values ($1, $2, $3, $3) returning id',
-      [req.body.title, req.body.body, now]
-    );
-    const insertedId = result.rows[0].id;
+    const note = insertNote(req.body.title, req.body.body);
+    const insertedId = note.id;
     await writeFile(
       path.resolve(NOTES_PATH, `${insertedId}.md`),
       req.body.body,
@@ -140,12 +116,9 @@ app.post(
 app.put(
   '/notes/:id',
   handleErrors(async function(req, res) {
-    const now = new Date();
     const updatedId = Number(req.params.id);
-    await pool.query(
-      'update notes set title = $1, body = $2, updated_at = $3 where id = $4',
-      [req.body.title, req.body.body, now, updatedId]
-    );
+    editNote(updatedId, req.body.title, req.body.body);
+
     await writeFile(
       path.resolve(NOTES_PATH, `${updatedId}.md`),
       req.body.body,
@@ -158,7 +131,7 @@ app.put(
 app.delete(
   '/notes/:id',
   handleErrors(async function(req, res) {
-    await pool.query('delete from notes where id = $1', [req.params.id]);
+    deleteNote(req.params.id);
     await unlink(path.resolve(NOTES_PATH, `${req.params.id}.md`));
     sendResponse(req, res, null);
   })
@@ -167,18 +140,15 @@ app.delete(
 app.get(
   '/notes',
   handleErrors(async function(_req, res) {
-    const {rows} = await pool.query('select * from notes order by id desc');
-    res.json(rows);
+    res.json(db);
   })
 );
 
 app.get(
   '/notes/:id',
   handleErrors(async function(req, res) {
-    const {rows} = await pool.query('select * from notes where id = $1', [
-      req.params.id,
-    ]);
-    res.json(rows[0]);
+    const note = findNote(req.params.id);
+    res.json(note);
   })
 );
 
@@ -190,6 +160,25 @@ app.get('/sleep/:ms', function(req, res) {
 
 app.use(express.static('build'));
 app.use(express.static('public'));
+
+app.on('error', function(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+});
 
 async function waitForWebpack() {
   while (true) {

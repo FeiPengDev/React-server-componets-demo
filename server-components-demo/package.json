@@ -38,6 +38,7 @@
     "prettier": "1.19.1"
   },
   "scripts": {
+    "start-test": "npm run bundler:dev && npm run server:dev",
     "start": "concurrently \"npm run server:dev\" \"npm run bundler:dev\"",
     "start:prod": "concurrently \"npm run server:prod\" \"npm run bundler:prod\"",
     "server:dev": "cross-env NODE_ENV=development nodemon -- --conditions=react-server server",

@@ -36,6 +36,7 @@ export default async function Note({selectedId, isEditing}) {
   const noteResponse = await fetch(`http://localhost:4000/notes/${selectedId}`);
   const note = await noteResponse.json();
 
+
   let {id, title, body, updated_at} = note;
   const updatedAt = new Date(updated_at);
 

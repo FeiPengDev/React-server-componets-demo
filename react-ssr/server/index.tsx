@@ -22,6 +22,6 @@ window.__initialState = { userName: '${userName}' };
 
 app.use(express.static('static'));
 
-app.listen(4000, () => {
-    console.log('Listening on port 4000');
+app.listen(4002, () => {
+    console.log('Listening on port 4002');
 });
