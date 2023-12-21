@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, {Suspense, useCallback} from 'react';
 
 export default ({ userName = 'unknown' }: { userName?: string }) => {
     const log = useCallback(() => {
@@ -8,7 +8,9 @@ export default ({ userName = 'unknown' }: { userName?: string }) => {
     return (
         <div>
             <p>react ssr demo</p>
-            <p>{userName}</p>
+            <Suspense fallback={<p>loading...</p>}>
+                <p>{userName}</p>
+            </Suspense>
             <button onClick={log}>Click me</button>
         </div>
     );
