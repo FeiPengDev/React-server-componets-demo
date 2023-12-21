@@ -93,7 +93,7 @@ function Render(props) {
 ![img_4.png](img_4.png)
 
 ### 工作流程
-
+![img_10.png](img_10.png)
 1. 路由根组件总是一个 server component，在获取到渲染请求后首先需要将根组件，基于HTML元素节点和客户端组件占位符，构建可序列化的树形结构
 [JSON状态标识](https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js)
 ![img_6.png](img_6.png)
