@@ -101,6 +101,7 @@ function Render(props) {
 ![img_7.png](img_7.png)
 3. 将拿到根组件的的树形结构转化为 React 树，并将客户端组件的模块引用转化为浏览器获取到的真正的客户端组件chunk
 ![img_5.png](img_5.png)
+![img_11.png](img_11.png)
 4. 将结合好的这棵树渲染并提交到DOM中
 5. 触发服务器组件更新，重新构造RSC请求获取新的序列树，同现有的UI树对比然后更新，不会丢失现有的浏览器状态，比如客户端组件的state
 
