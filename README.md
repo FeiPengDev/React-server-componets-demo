@@ -42,6 +42,8 @@ RSC是一种新型态的组件形式，可以专门在服务器上运行，并�
 2. 客户端会请求页面并加载包含应用逻辑的JS
 3. 水合（hydrated）打包好的JS中的逻辑如交互逻辑、更新页面状态进入客户端渲染阶段。
 
+ssr和suspense: https://github.com/reactwg/react-18/discussions/37
+
 ![img_3.png](img_3.png)
 
 ## React Server Components应用场景及其优点
@@ -49,6 +51,7 @@ RSC是一种新型态的组件形式，可以专门在服务器上运行，并�
 1. 减少打包体积：如果我们在服务器组件内使用任何第三方库，该库将不会包含在客户端的捆绑包中。这将减小 JavaScript 捆绑包的大小
 2. 直接访问服务器端存储的数据：如DB、文件等
 3. 自动代码分割：服务器组件对导入的客户端组件视为一个分割点
+
 
 ```javascript
 'use server'
@@ -68,6 +71,7 @@ function Render(props) {
 ![img_4.png](img_4.png)
 
 ### 工作流程
+
 1. 路由根组件总是一个 server component，在获取到渲染请求后首先需要将根组件，基于HTML元素节点和客户端组件占位符，构建可序列化的树形结构
 [JSON状态标识](https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js)
 ![img_6.png](img_6.png)
@@ -76,3 +80,7 @@ function Render(props) {
 3. 将拿到根组件的的树形结构转化为 React 树，并将客户端组件的模块引用转化为浏览器获取到的真正的客户端组件chunk
 ![img_5.png](img_5.png)
 4. 将结合好的这棵树渲染并提交到DOM中
+5. 触发服务器组件更新，重新构造RSC请求获取新的序列树，同现有的UI树对比然后更新，不会丢失现有的浏览器状态，比如客户端组件的state
+
+### 参考文档
+react-server-components: https://react.dev/blog/2020/12/21/data-fetching-with-react-server-components
