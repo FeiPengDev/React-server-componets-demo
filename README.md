@@ -107,5 +107,7 @@ function Render(props) {
 
 ### 参考文档
 react-server-components: https://react.dev/blog/2020/12/21/data-fetching-with-react-server-components
+
 Making Sense of React Server Components: https://www.joshwcomeau.com/react/server-components/
+
 ssr和suspense: https://github.com/reactwg/react-18/discussions/37
