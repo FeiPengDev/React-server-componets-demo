@@ -1,12 +1,11 @@
-# 一、React Server Components基本概念
+# 一、React Server Components
 
 RSC是一种新型态的组件形式，可以专门在服务器上运行，并且可以执行数据可查询、文件读写等操作。与之相对应的就是React Client Components(RCC).
 
 ## 特性
 1. 减少最终打包体积
-2. 减少获取数据上的时间消耗
+2. 避免瀑布式获取数据
 3. 渐进式渲染
-https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js
 
 ## 渲染方式
 
@@ -45,5 +44,35 @@ https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFligh
 
 ![img_3.png](img_3.png)
 
-### React Server Components
+## React Server Components应用场景及其优点
 
+1. 减少打包体积：如果我们在服务器组件内使用任何第三方库，该库将不会包含在客户端的捆绑包中。这将减小 JavaScript 捆绑包的大小
+2. 直接访问服务器端存储的数据：如DB、文件等
+3. 自动代码分割：服务器组件对导入的客户端组件视为一个分割点
+
+```javascript
+'use server'
+import OldRenderer from './OldRenderer.js';// client component
+import NewRenderer from './NewRenderer.js';// client component
+
+function Render(props) {
+  // 只有判断后需要的客户端组件才会被客户端获取并渲染
+  if (feature.useNewRenderer) {
+    return <NewRenderer {...props} />;
+  } else {
+    return <OldRenderer {...props} />;
+  }
+}
+```
+
+![img_4.png](img_4.png)
+
+### 工作流程
+1. 路由根组件总是一个 server component，在获取到渲染请求后首先需要将根组件，基于HTML元素节点和客户端组件占位符，构建可序列化的树形结构
+[JSON状态标识](https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js)
+![img_6.png](img_6.png)
+2. 将服务器组件中对客户端组件的引用转换为可序列化的“模块引用”对象
+![img_7.png](img_7.png)
+3. 将拿到根组件的的树形结构转化为 React 树，并将客户端组件的模块引用转化为浏览器获取到的真正的客户端组件chunk
+![img_5.png](img_5.png)
+4. 将结合好的这棵树渲染并提交到DOM中
